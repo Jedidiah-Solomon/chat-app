@@ -3,11 +3,10 @@ import http from "http";
 import express from "express";
 
 const app = express();
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000"], // front-end url
+    origin: ["http://localhost:3000", "https://chat-app-dho5.onrender.com"], // front-end url
     methods: ["GET", "POST"],
   },
 });
@@ -16,21 +15,36 @@ export const getReceiverSocketId = (receiverId) => {
   return userSocketMap[receiverId];
 };
 
-const userSocketMap = {}; // {userId: socketId}
+const userSocketMap = {}; // { userId: [socketId1, socketId2, ...] }
 
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
   const userId = socket.handshake.query.userId;
-  if (userId != "undefined") userSocketMap[userId] = socket.id;
+  if (userId) {
+    userSocketMap[userId] = userSocketMap[userId] || [];
+    userSocketMap[userId].push(socket.id);
+  }
 
-  // io.emit() is used to send events to all the connected clients
+  // Notify all clients about the online users
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  // socket.on() is used to listen to the events. can be used both on client and server side
+  // Handle user disconnection
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
-    delete userSocketMap[userId];
+
+    // Remove the socket ID from the userSocketMap
+    if (userId && userSocketMap[userId]) {
+      userSocketMap[userId] = userSocketMap[userId].filter(
+        (id) => id !== socket.id
+      );
+
+      // If there are no more socket IDs for this user, remove the user
+      if (userSocketMap[userId].length === 0) {
+        delete userSocketMap[userId];
+      }
+    }
+
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
