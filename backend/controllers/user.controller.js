@@ -8,7 +8,35 @@ export const getUsersForSidebar = async (req, res) => {
       _id: { $ne: loggedInUserId },
     }).select("-password");
 
-    res.status(200).json(filteredUsers);
+    const userCount = filteredUsers.length;
+
+    const genderBreakdown = filteredUsers.reduce(
+      (acc, user) => {
+        acc[user.gender]++;
+        return acc;
+      },
+      { male: 0, female: 0 }
+    );
+
+    const noProfilePicCount = filteredUsers.filter(
+      (user) => !user.profilePic || user.profilePic.trim() === ""
+    ).length;
+
+    const last7Days = new Date();
+    last7Days.setDate(last7Days.getDate() - 7);
+    const newUsers = filteredUsers.filter(
+      (user) => new Date(user.createdAt) >= last7Days
+    ).length;
+
+    res.status(200).json({
+      users: filteredUsers,
+      stats: {
+        userCount,
+        genderBreakdown,
+        noProfilePicCount,
+        newUsersLast7Days: newUsers,
+      },
+    });
   } catch (error) {
     console.error("Error in getUsersForSidebar: ", error.message);
     res.status(500).json({ error: "Internal server error" });

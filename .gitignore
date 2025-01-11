@@ -2,3 +2,5 @@ node_modules/
 google.json
 .env.development
 .env.production
+
+frontend/dist/
