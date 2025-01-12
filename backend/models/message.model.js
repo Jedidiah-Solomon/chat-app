@@ -16,10 +16,17 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // createdAt, updatedAt
+    // fileUrl: {
+    //   type: String,
+
+    //   default: null, // Default to null if no file is uploaded
+    // },
   },
   { timestamps: true }
 );
+
+// Index for fast lookup by sender and receiver
+messageSchema.index({ senderId: 1, receiverId: 1 });
 
 const Message = mongoose.model("Message", messageSchema);
 
