@@ -14,15 +14,13 @@ const useGetConversations = () => {
         const res = await fetch("/api/users");
         const data = await res.json();
 
-        if (!Array.isArray(data)) {
+        console.log("data from users: ", data);
+
+        if (!data.users || !Array.isArray(data.users)) {
           throw new Error("Unexpected data format received.");
         }
 
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
-        setConversations(data);
+        setConversations(data.users);
       } catch (error) {
         setError(error.message);
         toast.error(`Failed to load conversations: ${error.message}`);
