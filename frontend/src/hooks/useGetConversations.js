@@ -14,8 +14,6 @@ const useGetConversations = () => {
         const res = await fetch("/api/users");
         const data = await res.json();
 
-        console.log("data from users: ", data);
-
         if (!data.users || !Array.isArray(data.users)) {
           throw new Error("Unexpected data format received.");
         }
