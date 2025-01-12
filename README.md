@@ -2,9 +2,9 @@
 
 <a href="https://chat-app-dho5.onrender.com" target="_blank" style="padding: 10px 20px; background-color: #14193D; color: white; text-decoration: none; border-radius: 5px;">View Live App</a>
 
-![Demo App](https://i.ibb.co/0MWMYh7/11.png)
-
 ![Demo App](https://i.ibb.co/BK0sb0p/22.png)
+
+![Demo App](https://i.ibb.co/0MWMYh7/11.png)
 
 Some Features:
 
